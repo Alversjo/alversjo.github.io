@@ -28,7 +28,7 @@ export const loadPoi = async (map) =>
 
             let [lon, lat] = lonlat.includes(",") ? lonlat.split(",") : lonlat.split(" ");
 
-            if (!iconDict[type]) iconDict[type] = new centeredIcon({iconUrl: './img/icons/' + type + '.png'});
+            if (!iconDict[type]) iconDict[type] = new centeredIcon({iconUrl: './img/icons/' + type.toLowerCase() + '.png'});
              
             const content = '<h3>' + name + '</h3>' + '<p>' + description + '</p>';
             L.marker([lon, lat],
