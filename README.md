@@ -1,7 +1,5 @@
-The Borderland Map
+The Alversjö Map
 ==================
-
-https://www.theborderland.se/map/
 
 Running the code
 
