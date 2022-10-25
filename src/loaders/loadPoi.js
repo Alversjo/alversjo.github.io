@@ -25,24 +25,12 @@ export const loadPoi = async (map) =>
         if (spreadsheetdata[i][0]) //Check if 'type' column is not empty
         {
             const [type,name,description,lonlat] = spreadsheetdata[i];
-            const [lon, lat] = lonlat.split(",");
+
+            let [lon, lat] = lonlat.includes(",") ? lonlat.split(",") : lonlat.split(" ");
 
             if (!iconDict[type]) iconDict[type] = new centeredIcon({iconUrl: './img/icons/' + type + '.png'});
-            
-            let navigatehere = ' ';
-            navigatehere += '<a';
-            navigatehere += ' href="';
-            navigatehere += 'https://tim.gremalm.se/gps/updategps.php?lat='
-            navigatehere += lon;
-            navigatehere += '&lng=';
-            navigatehere += lat;
-            navigatehere += '"';
-            navigatehere += ' target="_blank"';
-            navigatehere += '>';
-            navigatehere += '☩';
-            navigatehere += '</a>';
-    
-            const content = '<h3>' + name + '</h3>' + '<p>' + description + navigatehere + '</p>';
+             
+            const content = '<h3>' + name + '</h3>' + '<p>' + description + '</p>';
             L.marker([lon, lat],
                 {icon: iconDict[type]
                 }).addTo(poiLayer).bindPopup(content);

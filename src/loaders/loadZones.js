@@ -102,7 +102,7 @@ export const loadZoneNames = async (map) => {
 			{
                 if (layer.feature.properties.type == 'zone')
                 {
-                    // console.log('zone', layer.feature.properties.name);
+                    console.log('zone', layer.feature.properties.name);
                     var zoneMarker = L.circle(layer.getBounds().getCenter(), {
                         color: "ddd",
                         fillColor: "#fff",

@@ -35,24 +35,24 @@ export const showHideTooltipsZoom = async(map, goalZoom) => {
 	// Hide tooltips dependent on zoom level
 	let goal = goalZoom;
 	// Borderland
-	if (goal < 16)
-	{
-		if (map.hasLayer(map.groups.power_menu))
-		{
-			showHideLayer(map, map.groups.boarderlandMarker, false);
-			showHideLayer(map, map.groups.powerBoarderlandMarker, true);
-		}
-		else
-		{
-			showHideLayer(map, map.groups.boarderlandMarker, true);
-			showHideLayer(map, map.groups.powerBoarderlandMarker, false);
-		}
-	}
-	else
-	{
-		showHideLayer(map, map.groups.boarderlandMarker, false);
-		showHideLayer(map, map.groups.powerBoarderlandMarker, false);
-	}
+	// if (goal < 16)
+	// {
+	// 	if (map.hasLayer(map.groups.power_menu))
+	// 	{
+	// 		showHideLayer(map, map.groups.boarderlandMarker, false);
+	// 		showHideLayer(map, map.groups.powerBoarderlandMarker, true);
+	// 	}
+	// 	else
+	// 	{
+	// 		showHideLayer(map, map.groups.boarderlandMarker, true);
+	// 		showHideLayer(map, map.groups.powerBoarderlandMarker, false);
+	// 	}
+	// }
+	// else
+	// {
+	// 	showHideLayer(map, map.groups.boarderlandMarker, false);
+	// 	showHideLayer(map, map.groups.powerBoarderlandMarker, false);
+	// }
 
 	// POI
 	if (map.hasLayer(map.groups.poi_menu))
@@ -75,89 +75,90 @@ export const showHideTooltipsZoom = async(map, goalZoom) => {
 	if (goal < 16)
 	{
 		showHideLayer(map, map.groups.zoneNames, false);
-		showHideLayer(map, map.groups.powerZoneNames, false);
+		// showHideLayer(map, map.groups.powerZoneNames, false);
 	}
 	else if (goal >= 16)
 	{
-		if (map.hasLayer(map.groups.power_menu))
-		{
-			showHideLayer(map, map.groups.zoneNames, false);
-			showHideLayer(map, map.groups.powerZoneNames, true);
-		}
-		else
-		{
-			showHideLayer(map, map.groups.zoneNames, true);
-			showHideLayer(map, map.groups.powerZoneNames, false);
-		}
+		showHideLayer(map, map.groups.zoneNames, true);
+		// if (map.hasLayer(map.groups.power_menu))
+		// {
+		// 	showHideLayer(map, map.groups.zoneNames, false);
+		// 	showHideLayer(map, map.groups.powerZoneNames, true);
+		// }
+		// else
+		// {
+		// 	showHideLayer(map, map.groups.zoneNames, true);
+		// 	showHideLayer(map, map.groups.powerZoneNames, false);
+		// }
 	}
 
 	// Cluster Names
-	let z1 = 17;
-	let z2 = 19;
-	if (map.hasLayer(map.groups.power_menu))
-	{
-		z1 = 18;
-		z2 = 20;
-	}
-	if (map.hasLayer(map.groups.clusters))
-	{
-		if (goal < z1)
-		{
-			showHideLayer(map, map.groups.clusterNames, false);
-			showHideLayer(map, map.groups.powerClustersNames, false);
-		}
-		else if (goal >= z1 && goal < z2)
-		{
-			if (map.hasLayer(map.groups.power_menu))
-			{
-				showHideLayer(map, map.groups.clusterNames, false);
-				showHideLayer(map, map.groups.powerClustersNames, true);
-			}
-			else
-			{
-				showHideLayer(map, map.groups.clusterNames, true);
-				showHideLayer(map, map.groups.powerClustersNames, false);
-			}
-		}
-		else if (goal >= z2)
-		{
-			showHideLayer(map, map.groups.clusterNames, false);
-			showHideLayer(map, map.groups.powerClustersNames, false);
-		}
-	}
-	else
-	{
-		showHideLayer(map, map.groups.clusterNames, false);
-		showHideLayer(map, map.groups.powerClustersNames, false);
-	}
+	// let z1 = 17;
+	// let z2 = 19;
+	// if (map.hasLayer(map.groups.power_menu))
+	// {
+	// 	z1 = 18;
+	// 	z2 = 20;
+	// }
+	// if (map.hasLayer(map.groups.clusters))
+	// {
+	// 	if (goal < z1)
+	// 	{
+	// 		showHideLayer(map, map.groups.clusterNames, false);
+	// 		showHideLayer(map, map.groups.powerClustersNames, false);
+	// 	}
+	// 	else if (goal >= z1 && goal < z2)
+	// 	{
+	// 		if (map.hasLayer(map.groups.power_menu))
+	// 		{
+	// 			showHideLayer(map, map.groups.clusterNames, false);
+	// 			showHideLayer(map, map.groups.powerClustersNames, true);
+	// 		}
+	// 		else
+	// 		{
+	// 			showHideLayer(map, map.groups.clusterNames, true);
+	// 			showHideLayer(map, map.groups.powerClustersNames, false);
+	// 		}
+	// 	}
+	// 	else if (goal >= z2)
+	// 	{
+	// 		showHideLayer(map, map.groups.clusterNames, false);
+	// 		showHideLayer(map, map.groups.powerClustersNames, false);
+	// 	}
+	// }
+	// else
+	// {
+	// 	showHideLayer(map, map.groups.clusterNames, false);
+	// 	showHideLayer(map, map.groups.powerClustersNames, false);
+	// }
 
 	// Camp Names
-	if (map.hasLayer(map.groups.clusters))
-	{
-		if (goal < z2)
-		{
-			showHideLayer(map, map.groups.campNames, false);
-			showHideLayer(map, map.groups.powerCampNames, false);
-		}
-		else if (goal >= z2)
-		{
-			if (map.hasLayer(map.groups.power_menu))
-			{
-				showHideLayer(map, map.groups.campNames, false);
-				showHideLayer(map, map.groups.powerCampNames, true);
-			}
-			else
-			{
-				showHideLayer(map, map.groups.campNames, true);
-				showHideLayer(map, map.groups.powerCampNames, false);
-			}
-		}
-	}
-	else
-	{
-		showHideLayer(map, map.groups.campNames, false);
-		showHideLayer(map, map.groups.powerCampNames, false);
-	}
+	// if (map.hasLayer(map.groups.clusters))
+	// {
+	// 	if (goal < z2)
+	// 	{
+	// 		showHideLayer(map, map.groups.campNames, false);
+	// 		showHideLayer(map, map.groups.powerCampNames, false);
+	// 	}
+	// 	else if (goal >= z2)
+	// 	{
+	// 		if (map.hasLayer(map.groups.power_menu))
+	// 		{
+	// 			showHideLayer(map, map.groups.campNames, false);
+	// 			showHideLayer(map, map.groups.powerCampNames, true);
+	// 		}
+	// 		else
+	// 		{
+	// 			showHideLayer(map, map.groups.campNames, true);
+	// 			showHideLayer(map, map.groups.powerCampNames, false);
+	// 		}
+	// 	}
+	// }
+	// else
+	// {
+	// 	showHideLayer(map, map.groups.campNames, false);
+	// 	showHideLayer(map, map.groups.powerCampNames, false);
+	// }
 }
 
 export const loadTooltipZoom = async(map) => {
