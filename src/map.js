@@ -13,7 +13,7 @@ import { loadDrawnMap } from './loaders/loadDrawnMap';
 import { addLegends } from './loaders/addLegends';
 import { loadPoi } from './loaders/loadPoi';
 import { loadTodos } from './loaders/loadTodos';
-import { postDataToSheet } from './utils/loadSpreadSheet';
+import { AddTodoButton } from './loaders/loadTodos';
 
 export const createMap = async () => 
 {
@@ -68,62 +68,6 @@ export const createMap = async () =>
 
     // startTraking(map);
 
-    // ------------------------------------------------------------------------------------------------------
-    // ADD TODO MARKERS START HERE
-    // ------------------------------------------------------------------------------------------------------
-    function addMarker(e)
-    {
-        // Add marker to map at click location; add popup window
-        var newMarker = new L.marker(e.latlng).addTo(map);
-        const spreadsheetdata = postDataToSheet(e.latlng);
-        map.off('click', addMarker);
-        console.log(e.latlng.lat,e.latlng.lng); 
-    }
-
-    // create custom button
-    const customControl = L.Control.extend(
-    {
-        // button position
-        options: 
-        {
-            position: "topright",
-        },
-
-        // method
-        onAdd: function (map) 
-        {
-            // create button
-            const btn = L.DomUtil.create("button");
-            btn.title = "Add Todos";
-            btn.textContent = "Add Todo";
-            btn.className = "todo_btn";
-            btn.setAttribute("style",
-            "background-color: white; width: 45px; height: 45px; border: 1px; display: flex; cursor: pointer; justify-content: center; font-size: 1rem;");
-
-            //So that clicking the button doesnt add a todo item under it
-            L.DomEvent.disableClickPropagation(btn);
-
-            // actions on mouseover
-            btn.onmouseover = function () {
-            this.style.transform = "scale(1.1)";
-            };
-
-            // actions on mouseout
-            btn.onmouseout = function () {
-            this.style.transform = "scale(1)";
-            };
-
-            // action when click on button
-            btn.onclick = function () 
-            {
-               console.log('Waiting to add todo');
-               map.on('click', addMarker);
-            };
-
-            return btn;
-        },
-    });
-
-    // adding new button to map control
-    map.addControl(new customControl());
+    //Add Todo adding capabilities
+    AddTodoButton(map);
 };

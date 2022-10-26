@@ -1,42 +1,147 @@
 import { loadGoogleSpreadSheet } from '../utils/loadSpreadSheet';
+import { postDataToSheet } from '../utils/loadSpreadSheet';
 import { PLACEMENT_MAP_SHEET } from '../constants';
 
 const iconsSize = 64;
 const iconAnchor = iconsSize * 0.5;
 
-var centeredIcon = L.Icon.extend({
+let centeredIcon = L.Icon.extend({
     options: {
         iconSize:     [iconsSize, iconsSize],
         iconAnchor:   [iconAnchor,iconsSize],
         popupAnchor:  [0,-iconsSize*0.5]
     }
 });
+let iconType = new centeredIcon({iconUrl: './img/icons/todo.png'});
+let todoLayer;
+
+let todoIconUnclassified = L.divIcon({className: 'todo-icon todo-unclassified', iconSize: [28, 28]});
+let todoIconCleanup = L.divIcon({className: 'todo-icon todo-cleanup', iconSize: [28, 28]});
+let todoIconMove = L.divIcon({className: 'todo-icon todo-move', iconSize: [28, 28]});
+let todoIconRepair = L.divIcon({className: 'todo-icon todo-repair', iconSize: [28, 28]});
+let todoIconBuild = L.divIcon({className: 'todo-icon todo-build', iconSize: [28, 28]});
+let todoIconInvestigate = L.divIcon({className: 'todo-icon todo-investigate', iconSize: [28, 28]});
 
 export const loadTodos = async (map) => 
 {
-    const spreadsheetdata = await loadGoogleSpreadSheet(PLACEMENT_MAP_SHEET, 'todos!A2:E');
-    let todoLayer = L.layerGroup();
-    let iconType = new centeredIcon({iconUrl: './img/icons/todo.png'});
+    const spreadsheetdata = await loadGoogleSpreadSheet(PLACEMENT_MAP_SHEET, 'todos!A2:F');
+    todoLayer = L.layerGroup();
 
     for (let i = 0; i < spreadsheetdata.length; i++) 
     {
         if (spreadsheetdata[i][4]) //Check if 'lat,lon' column is not empty
         {
-            const [date,done,task,description,lonlat] = spreadsheetdata[i];
+            const [date,done,task,description,lonlat,category] = spreadsheetdata[i];
+
+            //Skip tasks that are done
+            if (done === "TRUE") continue;
 
             //parse the lonlat-string according to how it is written, with or without a comma sign
             let [lon, lat] = lonlat.includes(",") ? lonlat.split(",") : lonlat.split(" ");
 
+            var iconToUse = todoIconUnclassified;
+
+            if (category && category.length > 0)
+            {
+                var cat = category.toLowerCase();
+                if (cat === "clean up"){ iconToUse = todoIconCleanup; }
+                else if (cat === "move"){ iconToUse = todoIconMove; }
+                else if (cat === "repair"){ iconToUse = todoIconRepair; }
+                else if (cat === "build"){ iconToUse = todoIconBuild; }
+                else if (cat === "investigate"){ iconToUse = todoIconInvestigate; }
+            }
+
             //create the popup window
-            const content = '<h3>' + task + '</h3>' + '<p>' + description + '</p>';
-            L.marker([lon, lat],{ icon: iconType }).addTo(todoLayer).bindPopup(content);
+            const content = '<h2>' + task + '</h2>' + '<p>' + description + '</p>';
+            L.marker([lon, lat],{ icon: iconToUse }).addTo(todoLayer).bindPopup(content);
         }
     }
 
     return todoLayer;
 };
 
+var _map;
+
+function addMarker(e)
+{
+    // Add marker to map at click location; add popup window
+    const content = '<h3>Please go to the spreadsheet to enter info about this task.</h3>';
+    var newMarker = new L.marker(e.latlng,{ icon: todoIconUnclassified }).addTo(todoLayer).bindPopup(content);
+
+    //This sends the data off to the spreadsheet
+    const spreadsheetdata = postDataToSheet(e.latlng);
+    
+    //Stop running addMarkers when the map is clicked 
+    _map.off('click', addMarker);
+
+    //Remove the help sign
+    instructions.remove();
+
+    //Make sure the help sign pops up automatically
+    newMarker.openPopup();
+}
+
+let instructions;
+
 export const AddTodoButton = async (map) => 
 {
-    
+    instructions = L.control({ position: "topright" });
+
+    instructions.onAdd = function () {
+      let div = L.DomUtil.create("div", "description");
+      L.DomEvent.disableClickPropagation(div);
+      const text = "<b>Click on the map to add the Task</b>";
+      div.insertAdjacentHTML("beforeend", text);
+      return div;
+    };
+
+    _map = map;
+
+    // create custom button
+    const customControl = L.Control.extend(
+    {
+        // button position
+        options: 
+        {
+            position: "topright",
+        },
+
+        // method
+        onAdd: function (map) 
+        {
+            // create button
+            const btn = L.DomUtil.create("button");
+            btn.title = "Add Todos";
+            btn.textContent = "Add Task";
+            btn.className = "add-todo-btn";
+            btn.setAttribute("style",
+            "border-radius:3px; background-color: white; width: 45px; height: 45px; line-height: 22px;border: 1px; display: flex; cursor: pointer; justify-content: center; font-size: 1rem;");
+
+            //So that clicking the button doesnt add a todo item under it
+            L.DomEvent.disableClickPropagation(btn);
+
+            // actions on mouseover
+            btn.onmouseover = function () {
+            this.style.transform = "scale(1.1)";
+            };
+
+            // actions on mouseout
+            btn.onmouseout = function () {
+            this.style.transform = "scale(1)";
+            };
+
+            // action when click on button
+            btn.onclick = function () 
+            {
+               console.log('Waiting to add todo');
+               instructions.addTo(map);
+               map.on('click', addMarker);
+            };
+
+            return btn;
+        },
+    });
+
+    // adding new button to map control
+    map.addControl(new customControl());
 };

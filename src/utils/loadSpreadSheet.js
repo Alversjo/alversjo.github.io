@@ -27,7 +27,7 @@ export const postDataToSheet = async (latlng) =>
     },
     redirect: 'follow', // manual, *follow, error
     referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-    body: 'done=false&task=entask&description=Något att göra&lat,lon=' + latlng.lat + " " + latlng.lng // body data type must match "Content-Type" header
+    body: 'done=false&task=A Task&description=Please update in the spreadsheet.&lat,lon=' + latlng.lat + " " + latlng.lng // body data type must match "Content-Type" header
   });
   
   return response.json(); // parses JSON response into native JavaScript objects
