@@ -64,24 +64,32 @@ var _map;
 
 function addMarker(e)
 {
+    
     // Add marker to map at click location; add popup window
     const content = '<h3>Please go to the spreadsheet to enter info about this task.</h3>';
     var newMarker = new L.marker(e.latlng,{ icon: todoIconUnclassified }).addTo(todoLayer).bindPopup(content);
-
+    
     //This sends the data off to the spreadsheet
     const spreadsheetdata = postDataToSheet(e.latlng);
     
     //Stop running addMarkers when the map is clicked 
     _map.off('click', addMarker);
-
+    
     //Remove the help sign
     instructions.remove();
-
+    
     //Make sure the help sign pops up automatically
     newMarker.openPopup();
+
+    //Change the style after task has been added
+    btn.classList.remove('add-todo-btn-animated');
+
+    isAddingTask = false;
 }
 
 let instructions;
+let btn;
+let isAddingTask = false;
 
 export const AddTodoButton = async (map) => 
 {
@@ -90,7 +98,7 @@ export const AddTodoButton = async (map) =>
     instructions.onAdd = function () {
       let div = L.DomUtil.create("div", "description");
       L.DomEvent.disableClickPropagation(div);
-      const text = "<b>Click on the map to add the Task</b>";
+      const text = "<b>Click on the map to add the Task. Click button again to cancel.</b>";
       div.insertAdjacentHTML("beforeend", text);
       return div;
     };
@@ -98,7 +106,7 @@ export const AddTodoButton = async (map) =>
     _map = map;
 
     // create custom button
-    const customControl = L.Control.extend(
+    const customButton = L.Control.extend(
     {
         // button position
         options: 
@@ -110,38 +118,38 @@ export const AddTodoButton = async (map) =>
         onAdd: function (map) 
         {
             // create button
-            const btn = L.DomUtil.create("button");
+            btn = L.DomUtil.create("button", "add-todo-btn");
             btn.title = "Add Todos";
             btn.textContent = "Add Task";
-            btn.className = "add-todo-btn";
-            btn.setAttribute("style",
-            "border-radius:3px; background-color: white; width: 45px; height: 45px; line-height: 22px;border: 1px; display: flex; cursor: pointer; justify-content: center; font-size: 1rem;");
 
             //So that clicking the button doesnt add a todo item under it
             L.DomEvent.disableClickPropagation(btn);
 
-            // actions on mouseover
-            btn.onmouseover = function () {
-            this.style.transform = "scale(1.1)";
-            };
-
-            // actions on mouseout
-            btn.onmouseout = function () {
-            this.style.transform = "scale(1)";
-            };
-
             // action when click on button
             btn.onclick = function () 
             {
-               console.log('Waiting to add todo');
-               instructions.addTo(map);
-               map.on('click', addMarker);
+                if (isAddingTask)
+                {
+                    isAddingTask = false;
+                    _map.off('click', addMarker);
+                    //Remove the help sign
+                    instructions.remove();
+                    btn.classList.remove('add-todo-btn-animated');
+                }
+                else
+                {
+                    instructions.addTo(map);
+                    console.log('Waiting to add todo');
+                    isAddingTask = true;
+                    btn.classList.add('add-todo-btn-animated');
+                    map.on('click', addMarker);
+                }
             };
 
             return btn;
-        },
+        }
     });
 
     // adding new button to map control
-    map.addControl(new customControl());
+    map.addControl(new customButton());
 };
