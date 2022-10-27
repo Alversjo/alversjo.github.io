@@ -28,6 +28,8 @@ export const loadBoarderlandMarker = async(map) => {
 	return group;
 }
 
+//In map.js
+// map.groups.discoDiffusion = await loadDiscoDiffusion(map);
 export const loadDiscoDiffusion = async(map) => {
 	// map.groups.discoDiffusion = await loadImageOverlay(map, './img/disco_diffusion.png', [[57.63029, 14.9155], [57.61400,14.9362]]);
     let group = new L.LayerGroup();

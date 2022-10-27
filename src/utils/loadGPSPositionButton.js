@@ -1,6 +1,6 @@
 import L from 'leaflet';
 
-export const loadPositionControl = async(map) => {
+export const loadGPSPositionButton = async(map) => {
     // Add Leaflet-locatecontrol plugin
     L.control.locate({ setView: 'once',
 					keepCurrentZoomLevel: true,
