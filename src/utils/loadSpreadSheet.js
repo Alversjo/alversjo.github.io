@@ -16,16 +16,17 @@ export const loadGoogleSpreadSheet = async (sheetId, range) =>
 // Based on https://github.com/levinunnink/html-form-to-google-sheet
 export const postDataToSheet = async (task, description, effort, prio, latlng) =>
 {
+  console.log("tasK:" + task);
   const response = await fetch('https://script.google.com/macros/s/AKfycbxOTZ9zfSjvDIF11No6BRBuL012-Dn0SKAAGlaBWgNOtQZYwuy_Sw7a7JEP8mOhGq9PZw/exec', {
     method: 'POST', // *GET, POST, PUT, DELETE, etc.
     // mode: 'cors', // no-cors, *cors, same-origin
     // cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
     // credentials: 'same-origin', // include, *same-origin, omit
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8' },
     // redirect: 'follow', // manual, *follow, error
     // referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-    body: 'done=false&task=' + task + 
-          '&description=' + description + 
+    body: 'done=false&task=\'' + encodeURI(task) + 
+          '&description=\'' + encodeURI(description) + 
           '&lat,lon=' + latlng +
           '&effort=' + effort +
           '&prio=' + prio
