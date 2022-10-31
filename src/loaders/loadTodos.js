@@ -2,36 +2,18 @@ import { loadGoogleSpreadSheet } from '../utils/loadSpreadSheet';
 import { postDataToSheet } from '../utils/loadSpreadSheet';
 import { PLACEMENT_MAP_SHEET } from '../constants';
 
-const iconsSize = 64;
-const iconAnchor = iconsSize * 0.5;
-
-let centeredIcon = L.Icon.extend({
-    options: {
-        iconSize:     [iconsSize, iconsSize],
-        iconAnchor:   [iconAnchor,iconsSize],
-        popupAnchor:  [0,-iconsSize*0.5]
-    }
-});
-let iconType = new centeredIcon({iconUrl: './img/icons/todo.png'});
 let todoLayer;
-
-let todoIconUnclassified = L.divIcon({className: 'todo-icon todo-unclassified', iconSize: [28, 28]});
-let todoIconCleanup = L.divIcon({className: 'todo-icon todo-cleanup', iconSize: [28, 28]});
-let todoIconMove = L.divIcon({className: 'todo-icon todo-move', iconSize: [28, 28]});
-let todoIconRepair = L.divIcon({className: 'todo-icon todo-repair', iconSize: [28, 28]});
-let todoIconBuild = L.divIcon({className: 'todo-icon todo-build', iconSize: [28, 28]});
-let todoIconInvestigate = L.divIcon({className: 'todo-icon todo-investigate', iconSize: [28, 28]});
 
 export const loadTodos = async (map) => 
 {
-    const spreadsheetdata = await loadGoogleSpreadSheet(PLACEMENT_MAP_SHEET, 'todos!A2:F');
+    const spreadsheetdata = await loadGoogleSpreadSheet(PLACEMENT_MAP_SHEET, 'todos!A2:G');
     todoLayer = L.layerGroup();
 
     for (let i = 0; i < spreadsheetdata.length; i++) 
     {
         if (spreadsheetdata[i][4]) //Check if 'lat,lon' column is not empty
         {
-            const [date,done,task,description,lonlat,category] = spreadsheetdata[i];
+            const [date,done,task,description,lonlat,complexity, prio] = spreadsheetdata[i];
 
             //Skip tasks that are done
             if (done === "TRUE") continue;
@@ -39,21 +21,30 @@ export const loadTodos = async (map) =>
             //parse the lonlat-string according to how it is written, with or without a comma sign
             let [lon, lat] = lonlat.includes(",") ? lonlat.split(",") : lonlat.split(" ");
 
-            var iconToUse = todoIconUnclassified;
-
-            if (category && category.length > 0)
+            let iconSize = 28;
+            if (prio && prio.length > 0)
             {
-                var cat = category.toLowerCase();
-                if (cat === "clean up"){ iconToUse = todoIconCleanup; }
-                else if (cat === "move"){ iconToUse = todoIconMove; }
-                else if (cat === "repair"){ iconToUse = todoIconRepair; }
-                else if (cat === "build"){ iconToUse = todoIconBuild; }
-                else if (cat === "investigate"){ iconToUse = todoIconInvestigate; }
+                var pr = prio.toLowerCase();
+                if (pr === "low"){ pr = ' todo-lowprio'; iconSize = 22; }
+                else if (pr === "normal"){ pr = ' todo-normalprio'; iconSize = 28;}
+                else if (pr === "high"){ pr = ' todo-highprio'; iconSize = 32;}
             }
 
+            if (complexity && complexity.length > 0)
+            {
+                var cx = complexity.toLowerCase();
+                if (cx === "low"){ cx = ' todo-lowcomplexity'; }
+                else if (cx === "medium"){ cx = ' todo-mediumcomplexity'; }
+                else if (cx === "high"){ cx = ' todo-highcomplexity'; }
+            }
+
+            var iconToUse = L.divIcon({className: 'todo-icon' + pr + cx, iconSize: [iconSize, iconSize]});
+
             //create the popup window
-            const content = '<h2>' + task + '</h2>' + '<p>' + description + '</p>';
-            L.marker([lon, lat],{ icon: iconToUse }).addTo(todoLayer).bindPopup(content);
+            const content = '<h1>' + task + '</h1>' +
+            '<p>' + description + '</p>' +
+            '<p class="task-header">' + prio + ' prio. ' + complexity + ' complexity.</p>';
+            L.marker([lon, lat],{ icon: iconToUse }).addTo(todoLayer).bindPopup(content, { maxWidth : 460 });
         }
     }
 
@@ -62,15 +53,56 @@ export const loadTodos = async (map) =>
 
 var _map;
 
-function addMarker(e)
+function setupSubmitTaskButton()
 {
-    
-    // Add marker to map at click location; add popup window
-    const content = '<h3>Please go to the spreadsheet to enter info about this task.</h3>';
-    var newMarker = new L.marker(e.latlng,{ icon: todoIconUnclassified }).addTo(todoLayer).bindPopup(content);
-    
+  const btn = document.getElementById("tasksubmitbtn");
+  btn.addEventListener("click", function () 
+  {
+    //Get the task from the form 
+    const task = document.getElementById("task").value;
+    const description = document.getElementById("description").value;
+    const latlng = document.getElementById("latlng").value;
+    const prio = document.getElementById("prio").value;
+    const complexity = document.getElementById("complexity").value;
+    _map.closePopup();
+
     //This sends the data off to the spreadsheet
-    const spreadsheetdata = postDataToSheet(e.latlng);
+    postDataToSheet(task, description, complexity, prio, latlng);
+  });
+}
+
+function addMarker(e)
+{   
+    // Add marker to map at click location; add popup window
+    const content = '<h3>What is this task about?</h3>' +
+        '<form>' +
+        '<input type="text" size="25" id="task" name="task" placeholder="Task name">' +
+        // '<input type="text" id="description" name="description" placeholder="Enter description here">' +
+        '<input type="hidden" id="done" name="done" value="FALSE">' +
+        '<textarea resize="none" id="description" name="description" rows="4" cols="26"></textarea>' +
+        '<input type="hidden" id="latlng" name="lat,lon" value="' + e.latlng.lat + ' ' + e.latlng.lng + '">' +
+        '<br>' +
+        '<label for="prio">Complexity:</label>' +
+        '<select id="complexity" name="complexity">' +
+        '<option value="Low">Low</option>' +
+        '<option value="Medium" selected>Medium</option>' +
+        '<option value="High">High</option>' +
+        '</select>' +
+        '<br><label for="prio">Priority:</label>' +
+        '<select id="prio" name="prio">' +
+        '<option value="Low">Low</option>' +
+        '<option value="Normal" selected>Normal</option>' +
+        '<option value="High">High</option>' +
+        '</select>' +
+        '<br><br><button type="reset" id="tasksubmitbtn" class="btn btn-primary addtask">Add task</button>' +
+        '</form>';
+        
+    var icon = L.divIcon({className: 'todo-icon todo-normalprio todo-mediumcomplexity', iconSize: [28, 28]});
+
+    var newMarker = new L.marker(e.latlng,{ icon: icon }).addTo(todoLayer).bindPopup(content);
+        
+    // event remove marker
+    newMarker.on("popupopen", setupSubmitTaskButton);
     
     //Stop running addMarkers when the map is clicked 
     _map.off('click', addMarker);
@@ -80,8 +112,10 @@ function addMarker(e)
     
     //Make sure the help sign pops up automatically
     newMarker.openPopup();
-
-    //Change the style after task has been added
+    //Set the view to the new marker location at the current zoom level
+    _map.setView(e.latlng, _map.getZoom());
+    
+    //Change the style of Add Task button after task has been added
     btn.classList.remove('add-todo-btn-animated');
 
     isAddingTask = false;

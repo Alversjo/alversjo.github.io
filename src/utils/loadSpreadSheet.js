@@ -14,21 +14,22 @@ export const loadGoogleSpreadSheet = async (sheetId, range) =>
 };
 
 // Based on https://github.com/levinunnink/html-form-to-google-sheet
-export const postDataToSheet = async (latlng) =>
+export const postDataToSheet = async (task, description, complexity, prio, latlng) =>
 {
-  // Default options are marked with *
   const response = await fetch('https://script.google.com/macros/s/AKfycbxOTZ9zfSjvDIF11No6BRBuL012-Dn0SKAAGlaBWgNOtQZYwuy_Sw7a7JEP8mOhGq9PZw/exec', {
     method: 'POST', // *GET, POST, PUT, DELETE, etc.
-    mode: 'cors', // no-cors, *cors, same-origin
-    cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-    credentials: 'same-origin', // include, *same-origin, omit
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    redirect: 'follow', // manual, *follow, error
-    referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-    body: 'done=false&task=A Task&description=Please update in the spreadsheet.&lat,lon=' + latlng.lat + " " + latlng.lng // body data type must match "Content-Type" header
+    // mode: 'cors', // no-cors, *cors, same-origin
+    // cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+    // credentials: 'same-origin', // include, *same-origin, omit
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    // redirect: 'follow', // manual, *follow, error
+    // referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+    body: 'done=false&task=' + task + 
+          '&description=' + description + 
+          '&lat,lon=' + latlng +
+          '&complexity=' + complexity +
+          '&prio=' + prio
   });
   
-  return response.json(); // parses JSON response into native JavaScript objects
+  return response.json();
 }

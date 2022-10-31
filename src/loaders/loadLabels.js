@@ -1,0 +1,40 @@
+import { loadGoogleSpreadSheet } from '../utils/loadSpreadSheet';
+import { PLACEMENT_MAP_SHEET } from '../constants';
+
+const iconsSize = 48;
+const iconAnchor = iconsSize * 0.5;
+
+var centeredIcon = L.Icon.extend({
+    options: {
+        iconSize:     [iconsSize, iconsSize],
+        iconAnchor:   [iconAnchor,iconAnchor],
+        popupAnchor:  [0,-iconsSize*0.25]
+    }
+});
+
+export const loadLabels = async (map) => 
+{
+    const spreadsheetdata = await loadGoogleSpreadSheet(PLACEMENT_MAP_SHEET, 'labels!A2:F');
+    let iconDict = {};
+
+    let poiLayer = L.layerGroup();
+
+    for (let i = 0; i < spreadsheetdata.length; i++) 
+    {
+        if (spreadsheetdata[i][0]) //Check if 'type' column is not empty
+        {
+            const [type,name,description,lonlat] = spreadsheetdata[i];
+
+            let [lon, lat] = lonlat.includes(",") ? lonlat.split(",") : lonlat.split(" ");
+
+            if (!iconDict[type]) iconDict[type] = new centeredIcon({iconUrl: './img/icons/' + type.toLowerCase() + '.png'});
+             
+            const content = '<h3>' + name + '</h3>' + '<p>' + description + '</p>';
+            L.marker([lon, lat],
+                {icon: iconDict[type]
+                }).addTo(poiLayer).bindPopup(content);
+        }
+    }
+
+    return poiLayer;
+};
