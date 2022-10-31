@@ -80,6 +80,14 @@ function setupSubmitTaskWindow(m)
         var icon = L.divIcon({className: className, iconSize: m.sourceTarget.options.icon.options.iconSize});
         m.sourceTarget.setIcon(icon);
 
+        //create the popup window
+        const content = '<h1>' + task + '</h1>' +
+        '<p>' + description + '</p>' +
+        '<p class="task-header">' + prio + ' prio. Effort: ' + effort + '</p>';
+
+        m.sourceTarget.setPopupContent(content);
+        m.sourceTarget.off("popupopen", setupSubmitTaskWindow);
+
         //This sends the data off to the spreadsheet
         postDataToSheet(task, description, effort, prio, latlng);
     });
