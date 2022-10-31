@@ -58,7 +58,6 @@
 
             .add-todo-btn-animated
             {
-                /* background-color: rgb(205, 205, 205); */
                 animation-name: stretch;
                 animation-duration: 1s; 
                 animation-timing-function: ease-out; 
@@ -69,17 +68,14 @@
                 animation-play-state: running;   
             }
 
-            @keyframes stretch 
+            @keyframes stretch
             {
-                0% {
-                    /* transform: scale(.3); */
+                0% 
+                {
                     background-color: rgb(205, 205, 205);
                 }
-                /* 50% {
-                    background-color: rgb(175, 175, 175);
-                } */
-                100% {
-                    /* transform: scale(1.5); */
+                100% 
+                {
                     border-radius: 0%;
                     background-color: rgb(255, 255, 255);
                     border-color: rgb(251, 255, 0);
@@ -98,45 +94,25 @@
                 border-radius:150px;                
             }
 
-            .todo-lowcomplexity
+            .todo-loweffort {}
+            .todo-mediumeffort {}
+            .todo-bigeffort {}
+
+            @keyframes borderColorFade
             {
-                background-color: rgb(65, 162, 51);
+                0% { border-color: rgb(247, 0, 255); }
+                100% { border-color: rgb(226, 171, 255); }
             }
 
-            .todo-mediumcomplexity
-            {
-                background-color: rgb(226, 204, 34);
-            }
+            .todo-lowprio { background-color: rgb(65, 162, 51); }
+            .todo-normalprio{ background-color: rgb(226, 204, 34); }
+            .todo-highprio{ background-color: rgb(156, 44, 34); }
 
-            .todo-highcomplexity
+            .todo-mysticalprio
             {
-                background-color: rgb(156, 44, 34);
-            }
-
-            @keyframes highPrioFade 
-            {
-                0% {
-                    border-color: rgb(251, 255, 0);
-                }
-                100% {
-                    border-color: rgb(255, 76, 36);
-                }
-            }
-
-            .todo-lowprio
-            {
-                    
-            }
-
-            .todo-normalprio
-            {
-                    
-            }
-
-            .todo-highprio
-            {
-                
-                animation-name: highPrioFade;
+                border-style: dotted;
+                background-color: rgb(136, 20, 189);
+                animation-name: borderColorFade;
                 animation-duration: 1s; 
                 animation-timing-function: ease-out; 
                 animation-delay: 0;
@@ -144,12 +120,11 @@
                 animation-iteration-count: infinite;
                 animation-fill-mode: none;
                 animation-play-state: running;   
+                background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgo8cGF0aCBkPSJNLTIgMTBMMTAgLTJaTTEwIDZMNiAxMFpNLTIgMkwyIC0yIiBzdHJva2U9InB1cnBsZSIgc3Ryb2tlLXdpZHRoPSIzLjUiPjwvcGF0aD4KPC9zdmc+"),url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPgo8bGluZWFyR3JhZGllbnQgaWQ9ImYiIHgyPSIiIHkyPSIxIj4KPHN0b3Agc3RvcC1jb2xvcj0iI0YxOSI+PC9zdG9wPgo8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwQ0YiPjwvc3RvcD4KPC9saW5lYXJHcmFkaWVudD4KPHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNmKSI+PC9yZWN0Pgo8L3N2Zz4=");
+                background-repeat: repeat;
             }
 
-            p 
-            {
-                font-size: 18px;
-            }
+            p { font-size: 18px; }
 
             .task-header
             {
@@ -160,10 +135,7 @@
                 text-transform: uppercase;
             }
 
-            textarea 
-            {
-                resize: none;
-            }
+            textarea { resize: none; }
         </style>
 
         <style>

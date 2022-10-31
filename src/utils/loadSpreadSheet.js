@@ -14,7 +14,7 @@ export const loadGoogleSpreadSheet = async (sheetId, range) =>
 };
 
 // Based on https://github.com/levinunnink/html-form-to-google-sheet
-export const postDataToSheet = async (task, description, complexity, prio, latlng) =>
+export const postDataToSheet = async (task, description, effort, prio, latlng) =>
 {
   const response = await fetch('https://script.google.com/macros/s/AKfycbxOTZ9zfSjvDIF11No6BRBuL012-Dn0SKAAGlaBWgNOtQZYwuy_Sw7a7JEP8mOhGq9PZw/exec', {
     method: 'POST', // *GET, POST, PUT, DELETE, etc.
@@ -27,7 +27,7 @@ export const postDataToSheet = async (task, description, complexity, prio, latln
     body: 'done=false&task=' + task + 
           '&description=' + description + 
           '&lat,lon=' + latlng +
-          '&complexity=' + complexity +
+          '&effort=' + effort +
           '&prio=' + prio
   });
   

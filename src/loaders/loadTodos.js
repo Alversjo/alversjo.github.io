@@ -13,7 +13,7 @@ export const loadTodos = async (map) =>
     {
         if (spreadsheetdata[i][4]) //Check if 'lat,lon' column is not empty
         {
-            const [date,done,task,description,lonlat,complexity, prio] = spreadsheetdata[i];
+            const [date,done,task,description,lonlat,effort,prio] = spreadsheetdata[i];
 
             //Skip tasks that are done
             if (done === "TRUE") continue;
@@ -25,25 +25,26 @@ export const loadTodos = async (map) =>
             if (prio && prio.length > 0)
             {
                 var pr = prio.toLowerCase();
-                if (pr === "low"){ pr = ' todo-lowprio'; iconSize = 22; }
-                else if (pr === "normal"){ pr = ' todo-normalprio'; iconSize = 28;}
-                else if (pr === "high"){ pr = ' todo-highprio'; iconSize = 32;}
+                if (pr === "low"){ pr = ' todo-lowprio'; }
+                else if (pr === "normal"){ pr = ' todo-normalprio'; }
+                else if (pr === "high"){ pr = ' todo-highprio'; }
+                else if (pr === "mystical"){ pr = ' todo-mysticalprio'; }
             }
 
-            if (complexity && complexity.length > 0)
+            if (effort && effort.length > 0)
             {
-                var cx = complexity.toLowerCase();
-                if (cx === "low"){ cx = ' todo-lowcomplexity'; }
-                else if (cx === "medium"){ cx = ' todo-mediumcomplexity'; }
-                else if (cx === "high"){ cx = ' todo-highcomplexity'; }
+                var eff = effort.toLowerCase();
+                if (eff === "less than an hour"){ eff = ' todo-loweffort'; iconSize = 18;}
+                else if (eff === "less than a day"){ eff = ' todo-mediumeffort'; iconSize = 28  ;}
+                else if (eff === "several days"){ eff = ' todo-bigeffort'; iconSize = 38;}
             }
 
-            var iconToUse = L.divIcon({className: 'todo-icon' + pr + cx, iconSize: [iconSize, iconSize]});
+            var iconToUse = L.divIcon({className: 'todo-icon' + pr + eff, iconSize: [iconSize, iconSize]});
 
             //create the popup window
             const content = '<h1>' + task + '</h1>' +
             '<p>' + description + '</p>' +
-            '<p class="task-header">' + prio + ' prio. ' + complexity + ' complexity.</p>';
+            '<p class="task-header">' + prio + ' prio. Effort: ' + effort + '</p>';
             L.marker([lon, lat],{ icon: iconToUse }).addTo(todoLayer).bindPopup(content, { maxWidth : 460 });
         }
     }
@@ -63,11 +64,11 @@ function setupSubmitTaskButton()
     const description = document.getElementById("description").value;
     const latlng = document.getElementById("latlng").value;
     const prio = document.getElementById("prio").value;
-    const complexity = document.getElementById("complexity").value;
+    const effort = document.getElementById("effort").value;
     _map.closePopup();
 
     //This sends the data off to the spreadsheet
-    postDataToSheet(task, description, complexity, prio, latlng);
+    postDataToSheet(task, description, effort, prio, latlng);
   });
 }
 
@@ -82,17 +83,18 @@ function addMarker(e)
         '<textarea resize="none" id="description" name="description" rows="4" cols="26"></textarea>' +
         '<input type="hidden" id="latlng" name="lat,lon" value="' + e.latlng.lat + ' ' + e.latlng.lng + '">' +
         '<br>' +
-        '<label for="prio">Complexity:</label>' +
-        '<select id="complexity" name="complexity">' +
-        '<option value="Low">Low</option>' +
-        '<option value="Medium" selected>Medium</option>' +
-        '<option value="High">High</option>' +
+        '<label for="prio">Effort:</label>' +
+        '<select id="effort" name="effort">' +
+        '<option value="Less than an hour">Less than an hour</option>' +
+        '<option value="Less than a day" selected>Less than a day</option>' +
+        '<option value="Several days">Several days</option>' +
         '</select>' +
         '<br><label for="prio">Priority:</label>' +
         '<select id="prio" name="prio">' +
         '<option value="Low">Low</option>' +
         '<option value="Normal" selected>Normal</option>' +
         '<option value="High">High</option>' +
+        '<option value="Mystical">Mystical</option>' +
         '</select>' +
         '<br><br><button type="reset" id="tasksubmitbtn" class="btn btn-primary addtask">Add task</button>' +
         '</form>';
