@@ -57,6 +57,7 @@ var _map;
 function setupSubmitTaskButton()
 {
   const btn = document.getElementById("tasksubmitbtn");
+  btn.disabled = true;
   btn.addEventListener("click", function () 
   {
     //Get the task from the form 
@@ -70,6 +71,17 @@ function setupSubmitTaskButton()
     //This sends the data off to the spreadsheet
     postDataToSheet(task, description, effort, prio, latlng);
   });
+
+  const taskName = document.getElementById("task");
+  taskName.addEventListener("keyup", function (e) 
+  {
+    //enable the button if task name is longer than two
+    if (e.target.value.length > 2)
+    {
+      btn.disabled = false;
+    }
+    else btn.disabled = true;
+  });
 }
 
 function addMarker(e)
@@ -78,12 +90,11 @@ function addMarker(e)
     const content = '<h1>What is this task about?</h1>' +
         '<form>' +
         '<input type="hidden" id="done" name="done" value="FALSE">' +
-        '<input type="text" size="25" id="task" name="task" placeholder="Task name" required>' +
+        '<input type="text" size="25" id="task" name="task" placeholder="Task name (required)" class="required">' +
         '<textarea resize="none" id="description" name="description" rows="4" cols="26" placeholder="Enter description here"></textarea>' +
         '<input type="hidden" id="latlng" name="lat,lon" value="' + e.latlng.lat + ' ' + e.latlng.lng + '">' +
-        // '<br>' +
         '<label for="effort">Effort:</label>' +
-        '<select id="effort" name="effort">' +
+        '<select id="effort" name="effort">' +  
         '<option value="Less than an hour">Less than an hour</option>' +
         '<option value="Less than a day" selected>Less than a day</option>' +
         '<option value="Several days">Several days</option>' +
