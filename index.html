@@ -40,19 +40,6 @@
                 border: 1px solid grey;
             }
 
-            .todo-icon
-            {
-                content: "T";
-                width:100px;height:100px;
-                border: solid 2px rgb(33, 33, 33);
-                background-color: rgb(238, 238, 221);
-                box-shadow: 3px 3px  rgba(0,0,0,0.3);
-                -moz-box-shadow: 3px 3px  rgba(0,0,0,0.3);
-                -webkit-box-shadow: 3px 3px  rgba(0,0,0,0.3);
-                -o-box-shadow: 3px 3px  rgba(0,0,0,0.3);
-                border-radius:150px;                
-            }
-
             .add-todo-btn
             {
                 border-radius:10%; 
@@ -99,88 +86,83 @@
                 }
             }
 
-            .todo-unclassified
+            .todo-icon
             {
-                opacity: 0.5;   
+                width:100px;height:100px;
+                border: solid 2px rgb(33, 33, 33);
+                background-color: rgb(238, 238, 221);
+                box-shadow: 3px 3px  rgba(0,0,0,0.3);
+                -moz-box-shadow: 3px 3px  rgba(0,0,0,0.3);
+                -webkit-box-shadow: 3px 3px  rgba(0,0,0,0.3);
+                -o-box-shadow: 3px 3px  rgba(0,0,0,0.3);
+                border-radius:150px;                
             }
 
-            .todo-cleanup
+            .todo-lowcomplexity
             {
-                background-color: rgb(26, 202, 88);
+                background-color: rgb(65, 162, 51);
             }
 
-            .todo-move
+            .todo-mediumcomplexity
             {
-                background-color: rgb(136, 145, 139);
+                background-color: rgb(226, 204, 34);
             }
 
-            .todo-repair
+            .todo-highcomplexity
             {
-                background-color: rgb(26, 146, 202);
+                background-color: rgb(156, 44, 34);
             }
 
-            .todo-build
+            @keyframes highPrioFade 
             {
-                background-color: rgb(202, 199, 26);
+                0% {
+                    border-color: rgb(251, 255, 0);
+                }
+                100% {
+                    border-color: rgb(255, 76, 36);
+                }
             }
 
-            .todo-investigate
+            .todo-lowprio
             {
-                background-color: rgb(155, 26, 202);
+                    
             }
 
-            .camps-list-tooltip ul {
-                padding-left: 1em;
-            }
-            .camps-list-tooltip {
-                color: #fff;
-                opacity: 1.0;
-                text-shadow: 1px 1px #000000;
-                font-size: 0.8rem;
-            }
-            .camps-list-tooltip h3 {
-                font-weight: bold;
-            }
-            .camps-list-tooltip h3, .camps-list-tooltip ul {
-                margin: 0;
+            .todo-normalprio
+            {
+                    
             }
 
-            .borderland-marker h1 {
-                font-size: 2.0rem;
-                color: #fa6;
-                padding: 0;
-                margin: 0;
-            }
-            .borderland-marker h2 {
-                font-size: 1.6rem;
-                color: #fea;
-                padding: 0;
-                margin: 0;
-            }
-            .borderland-marker li {
-                font-size: 1.0rem;
-                color: #fea;
-            }
-            .borderland-marker {
-                opacity: 1.0;
-                text-shadow: 3px 3px #000000;
-                font-weight: bold;
-                padding: 0;
-                margin: 0;
+            .todo-highprio
+            {
+                
+                animation-name: highPrioFade;
+                animation-duration: 1s; 
+                animation-timing-function: ease-out; 
+                animation-delay: 0;
+                animation-direction: alternate;
+                animation-iteration-count: infinite;
+                animation-fill-mode: none;
+                animation-play-state: running;   
             }
 
-            .zone-tooltip {
-                padding: 0;
-                margin: 0;
+            p 
+            {
+                font-size: 18px;
             }
-            .zone-tooltip h3 {
-                color: #ffa;
-                opacity: 1.0;
-                text-shadow: 2px 2px #000000;
-                font-weight: bold;
-                font-size: 0.8rem;
-                padding: 0;
-                margin: 0;
+
+            .task-header
+            {
+                font-size: 14px;
+                font-family: 'Courier New', Courier, monospace;
+                color: rgb(134, 134, 134);
+                line-height: 0%;
+                text-transform: uppercase;
+            }
+
+            textarea 
+            {
+                resize: none;
             }
         </style>
 
