@@ -45,7 +45,14 @@ export const loadTodos = async (map) =>
             const content = '<h1>' + task + '</h1>' +
             '<p>' + description + '</p>' +
             '<p class="task-header">' + prio + ' prio. Effort: ' + effort + '</p>';
-            L.marker([lon, lat],{ icon: iconToUse }).addTo(todoLayer).bindPopup(content, { maxWidth : 460 });
+
+            let windowWidth = 480;
+            if (L.Browser.mobile)
+            {
+                windowWidth = 410;
+            }
+
+            L.marker([lon, lat],{ icon: iconToUse }).addTo(todoLayer).bindPopup(content, { maxWidth : windowWidth });
         }
     }
 
@@ -54,34 +61,75 @@ export const loadTodos = async (map) =>
 
 var _map;
 
-function setupSubmitTaskButton()
+function setupSubmitTaskWindow(m)
 {
-  const btn = document.getElementById("tasksubmitbtn");
-  btn.disabled = true;
-  btn.addEventListener("click", function () 
-  {
-    //Get the task from the form 
-    const task = document.getElementById("task").value;
-    const description = document.getElementById("description").value;
-    const latlng = document.getElementById("latlng").value;
-    const prio = document.getElementById("prio").value;
-    const effort = document.getElementById("effort").value;
-    _map.closePopup();
-
-    //This sends the data off to the spreadsheet
-    postDataToSheet(task, description, effort, prio, latlng);
-  });
-
-  const taskName = document.getElementById("task");
-  taskName.addEventListener("keyup", function (e) 
-  {
-    //enable the button if task name is longer than two
-    if (e.target.value.length > 2)
+    const btn = document.getElementById("tasksubmitbtn");
+    btn.disabled = true;    
+    btn.addEventListener("click", function () 
     {
-      btn.disabled = false;
-    }
-    else btn.disabled = true;
-  });
+        //Get the task from the form 
+        const task = document.getElementById("task").value;
+        const description = document.getElementById("description").value;
+        const latlng = document.getElementById("latlng").value;
+        const prio = document.getElementById("prio").value;
+        const effort = document.getElementById("effort").value;
+        _map.closePopup();
+
+        //Remove the low opacity from the marker
+        var className = m.sourceTarget.options.icon.options.className.replace(" todo-unsaved", "");
+        var icon = L.divIcon({className: className, iconSize: m.sourceTarget.options.icon.options.iconSize});
+        m.sourceTarget.setIcon(icon);
+
+        //This sends the data off to the spreadsheet
+        postDataToSheet(task, description, effort, prio, latlng);
+    });
+
+    const taskName = document.getElementById("task");
+    taskName.addEventListener("keyup", function (e) 
+    {
+        //enable the button if task name is longer than two
+        if (e.target.value.length > 2)
+        {
+        btn.disabled = false;
+        }
+        else btn.disabled = true;
+    });
+
+    const taskEffortSelect = document.getElementById("effort");
+    taskEffortSelect.addEventListener("change", function (e) 
+    {
+        var newSize = 28;
+        if (e.target.value.toLowerCase() === "less than an hour")
+        {
+            newSize = 18;
+        }
+        else if (e.target.value.toLowerCase() === "several days")
+        {
+            newSize = 38;
+        }
+        var icon = L.divIcon({className: m.sourceTarget.options.icon.options.className, iconSize: [newSize, newSize]});
+        m.sourceTarget.setIcon(icon);
+    });
+
+    const taskPrioSelect = document.getElementById("prio");
+    taskPrioSelect.addEventListener("change", function (e) 
+    {
+        var newClass = 'todo-icon todo-unsaved todo-normalprio';
+        if (e.target.value.toLowerCase() === "low")
+        {
+            newClass = 'todo-icon todo-unsaved todo-lowprio'
+        }
+        else if (e.target.value.toLowerCase() === "high")
+        {
+            newClass = 'todo-icon todo-unsaved todo-highprio'
+        }
+        else if (e.target.value.toLowerCase() === "mystical")
+        {
+            newClass = 'todo-icon todo-unsaved todo-mysticalprio'
+        }
+        var icon = L.divIcon({className: newClass, iconSize: m.sourceTarget.options.icon.options.iconSize});
+        m.sourceTarget.setIcon(icon);
+    });
 }
 
 function addMarker(e)
@@ -93,28 +141,28 @@ function addMarker(e)
         '<input type="text" size="25" id="task" name="task" placeholder="Task name (required)" class="required">' +
         '<textarea resize="none" id="description" name="description" rows="4" cols="26" placeholder="Enter description here"></textarea>' +
         '<input type="hidden" id="latlng" name="lat,lon" value="' + e.latlng.lat + ' ' + e.latlng.lng + '">' +
-        '<label for="effort">Effort:</label>' +
+        '<div class="taskSelectBox"><label for="effort">Effort needed</label>' +
         '<select id="effort" name="effort">' +  
         '<option value="Less than an hour">Less than an hour</option>' +
         '<option value="Less than a day" selected>Less than a day</option>' +
         '<option value="Several days">Several days</option>' +
-        '</select>' +
-        '<label for="prio">Priority:</label>' +
+        '</select></div>' +
+        '<div class="taskSelectBox"><label for="prio">Priority</label>' +
         '<select id="prio" name="prio">' +
         '<option value="Low">Low</option>' +
         '<option value="Normal" selected>Normal</option>' +
         '<option value="High">High</option>' +
         '<option value="Mystical">Mystical</option>' +
-        '</select>' +
+        '</select></div>' +
         '<button type="reset" id="tasksubmitbtn" class="btn btn-primary addtask">Add task</button>' +
         '</form>';
         
-    var icon = L.divIcon({className: 'todo-icon todo-normalprio todo-mediumcomplexity', iconSize: [28, 28]});
+    var icon = L.divIcon({className: 'todo-icon todo-unsaved todo-normalprio', iconSize: [28, 28]});
 
     var newMarker = new L.marker(e.latlng,{ icon: icon }).addTo(todoLayer).bindPopup(content);
-        
+    
     // event remove marker
-    newMarker.on("popupopen", setupSubmitTaskButton);
+    newMarker.on("popupopen", setupSubmitTaskWindow);
     
     //Stop running addMarkers when the map is clicked 
     _map.off('click', addMarker);
