@@ -21,7 +21,7 @@
 
             *:focus {outline:none !important}
 
-            input, textarea, select, button
+            input[type=text], textarea, select, button
             {
                 font-family:Arial, Helvetica, sans-serif;
                 font-size: medium;
@@ -33,14 +33,15 @@
                 font-weight:500;
             }
 
-            input, textarea, button
+            input[type=text], textarea, button
             {
                 /* remove default behavior */
                 appearance:none;
                 -webkit-appearance:none;
             }
 
-            
+            textarea { resize: none; }
+
             select
             {
                 /* margin-left: 10%; */
@@ -191,8 +192,13 @@
                 line-height: 0%;
                 text-transform: uppercase;
             }
+            
+            .leaflet-control-layers label
+            {
+                width: auto; 
+                font-size: 1.3em;
+            }
 
-            textarea { resize: none; }
         </style>
 
         <style>
