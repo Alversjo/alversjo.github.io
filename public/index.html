@@ -14,12 +14,66 @@
         <link rel="stylesheet" href="js/plugins/leaflet-search/dist/leaflet-search.min.css" />
 
         <style>
-            html,
-            body {
+            *, *:before, *:after 
+            {
+                box-sizing: border-box;
+            }
+
+            *:focus {outline:none !important}
+
+            input, textarea, select, button
+            {
+                font-family:Arial, Helvetica, sans-serif;
+                font-size: medium;
+                padding:10px;
+                margin:5px 0;
+                border-radius:10px;
+                border: 1px solid #aaa;
+                width:100%;
+                font-weight:500;
+            }
+
+            input, textarea, button
+            {
+                /* remove default behavior */
+                appearance:none;
+                -webkit-appearance:none;
+            }
+
+            
+            select
+            {
+                /* margin-left: 10%; */
+                text-align: right;
+                width:70%;
+            }
+
+            label 
+            {
+                display: inline-block;
+                width: 30%;
+                text-align: left;
+                font-weight:500;
+                font-size: large;
+            }
+
+            button
+            {
+                color:#fff;
+                font-weight:600;
+                font-size: large;
+                background-color: lightseagreen;
+                box-shadow:2px 2px 8px 2px rgba(0,0,0,0.2);
+            }
+
+            html, body 
+            {
                 height: 100%;
                 margin: 0;
             }
-            .leaflet-container {
+
+            .leaflet-container 
+            {
                 height: 400px;
                 width: 600px;
                 max-width: 100%;
@@ -42,6 +96,7 @@
 
             .add-todo-btn
             {
+                padding:0px;
                 border-radius:10%; 
                 width: 45px; 
                 height: 45px; 
@@ -52,8 +107,10 @@
                 display: flex; 
                 cursor: pointer; 
                 justify-content: center; 
-                font-size: 1rem;
+                font-size: small;
+                font-weight: 600;
                 background-color: rgb(233, 233, 233); 
+                color: #333;
             }
 
             .add-todo-btn-animated

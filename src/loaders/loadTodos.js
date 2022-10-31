@@ -75,28 +75,27 @@ function setupSubmitTaskButton()
 function addMarker(e)
 {   
     // Add marker to map at click location; add popup window
-    const content = '<h3>What is this task about?</h3>' +
+    const content = '<h1>What is this task about?</h1>' +
         '<form>' +
-        '<input type="text" size="25" id="task" name="task" placeholder="Task name">' +
-        // '<input type="text" id="description" name="description" placeholder="Enter description here">' +
         '<input type="hidden" id="done" name="done" value="FALSE">' +
-        '<textarea resize="none" id="description" name="description" rows="4" cols="26"></textarea>' +
+        '<input type="text" size="25" id="task" name="task" placeholder="Task name" required>' +
+        '<textarea resize="none" id="description" name="description" rows="4" cols="26" placeholder="Enter description here"></textarea>' +
         '<input type="hidden" id="latlng" name="lat,lon" value="' + e.latlng.lat + ' ' + e.latlng.lng + '">' +
-        '<br>' +
-        '<label for="prio">Effort:</label>' +
+        // '<br>' +
+        '<label for="effort">Effort:</label>' +
         '<select id="effort" name="effort">' +
         '<option value="Less than an hour">Less than an hour</option>' +
         '<option value="Less than a day" selected>Less than a day</option>' +
         '<option value="Several days">Several days</option>' +
         '</select>' +
-        '<br><label for="prio">Priority:</label>' +
+        '<label for="prio">Priority:</label>' +
         '<select id="prio" name="prio">' +
         '<option value="Low">Low</option>' +
         '<option value="Normal" selected>Normal</option>' +
         '<option value="High">High</option>' +
         '<option value="Mystical">Mystical</option>' +
         '</select>' +
-        '<br><br><button type="reset" id="tasksubmitbtn" class="btn btn-primary addtask">Add task</button>' +
+        '<button type="reset" id="tasksubmitbtn" class="btn btn-primary addtask">Add task</button>' +
         '</form>';
         
     var icon = L.divIcon({className: 'todo-icon todo-normalprio todo-mediumcomplexity', iconSize: [28, 28]});
