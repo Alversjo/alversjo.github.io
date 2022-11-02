@@ -15,7 +15,6 @@ export const loadTodos = async (map) =>
         {
             const [date,done,task,description,lonlat,effort,prio] = spreadsheetdata[i];
 
-            //Skip tasks that are done
             if (done === "TRUE") continue;
 
             //parse the lonlat-string according to how it is written, with or without a comma sign
@@ -46,12 +45,11 @@ export const loadTodos = async (map) =>
             '<p>' + description + '</p>' +
             '<p class="task-header">' + prio + ' prio. Effort: ' + effort + '</p>';
 
-            let windowWidth = 480;
-            if (L.Browser.mobile)
-            {
-                windowWidth = 410;
-            }
+            console.log("windowwidth: " + window.innerWidth);
 
+            let windowWidth = 520;
+            if (window.innerWidth < windowWidth) { windowWidth = window.innerWidth - 100; }
+            
             L.marker([lon, lat],{ icon: iconToUse }).addTo(todoLayer).bindPopup(content, { maxWidth : windowWidth });
         }
     }
@@ -167,7 +165,10 @@ function addMarker(e)
         
     var icon = L.divIcon({className: 'todo-icon todo-unsaved todo-normalprio', iconSize: [28, 28]});
 
-    var newMarker = new L.marker(e.latlng,{ icon: icon }).addTo(todoLayer).bindPopup(content);
+    let windowWidth = 480;
+    if (window.innerWidth < 450) { windowWidth = window.innerWidth - 20; }
+
+    var newMarker = new L.marker(e.latlng,{ icon: icon }).addTo(todoLayer).bindPopup(content, { maxWidth : windowWidth });
     
     // event remove marker
     newMarker.on("popupopen", setupSubmitTaskWindow);
